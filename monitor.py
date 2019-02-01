@@ -6,7 +6,7 @@ import psutil, re, commands, time
 from inky import InkyPHAT
 from PIL import Image, ImageDraw, ImageFont
 
-REFRESH_RATE = 40
+REFRESH_RATE = 50
 NETWORK_GRAPH = []
 
 display = InkyPHAT('yellow')
