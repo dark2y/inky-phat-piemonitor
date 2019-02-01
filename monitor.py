@@ -16,12 +16,13 @@ font = ImageFont.truetype('resources/OpenSans-Bold.ttf', 13)
 
 def main():
     
-    #bg = safe_image(Image.open("resources/background-3.png"))
-    bg = safe_image(Image.open("resources/background-0.png"))
+    #bg = safe_image(Image.open("resources/background-0.png"))
+    bg = Image.open("resources/background-0.png")
+
     canvas = ImageDraw.Draw(bg)
 
     CPU_TEMP = get_cpu_temp()
-    NETWORK_BITES = get_network_bytes('wlan0')
+    NETWORK_BITES = get_network_bytes('eth0')
     CPU_PERCENT = psutil.cpu_percent()
     MEMORY_PERCENT = psutil.virtual_memory()[2]
     UPTIME = (time.time() - psutil.boot_time()) / 60 / 60;
@@ -31,23 +32,26 @@ def main():
     except:
         DISK_PERCENT = 0.0;
 
-    print('CPU TEMP: %.1f*C' % CPU_TEMP)
-    print('CPU USAGE: %d%%' % CPU_PERCENT)
-    print('RAM USAGE: %d%%' % MEMORY_PERCENT)
-    print('DISK USAGE: %.1f%%' % DISK_PERCENT)
-    print('UPTIME: %d' % UPTIME)
-    print('NET: IN %dmb OUT %dmb' % NETWORK_BITES)
+    lines = [];
+
+    lines.append('CPU TEMP: %.1f*C' % CPU_TEMP)
+    lines.append('CPU USAGE: %d%%' % CPU_PERCENT)
+    lines.append('RAM USAGE: %d%%' % MEMORY_PERCENT)
+    lines.append('DISK USAGE: %.1f%%' % DISK_PERCENT)
+    lines.append('UPTIME: %d' % UPTIME)
+    lines.append('NET: IN %dmb OUT %dmb' % NETWORK_BITES)
 
     #NETWORK_GRAPH.append((time.time(), NETWORK_BITES))
     #print NETWORK_GRAPH
+    #canvas.text((180, 5), '%dh' % UPTIME, InkyPHAT.BLACK, font=font)
 
-    canvas.text((160, 5), '%dh' % UPTIME, InkyPHAT.BLACK, font=font)
+    print lines
     
-    canvas.text((5, 5), 'CPU TEMP: %.1f*C' % CPU_TEMP, InkyPHAT.BLACK, font=font)
-    canvas.text((5, 20), 'CPU USAGE: %d%%' % CPU_PERCENT, InkyPHAT.BLACK, font=font)
-    canvas.text((5, 35), 'RAM USAGE: %d%%' % MEMORY_PERCENT, InkyPHAT.BLACK, font=font)
-    canvas.text((5, 50), 'DISK USAGE: %.1f%%' % DISK_PERCENT, InkyPHAT.BLACK, font=font)
-    canvas.text((5, 65), 'IN %dmb / OUT %dmb' % NETWORK_BITES, InkyPHAT.YELLOW, font=font)
+    canvas.text((5, 2), 'CPU TEMP: %.1f*C' % CPU_TEMP, InkyPHAT.YELLOW, font=font)
+    canvas.text((5, 18), 'CPU USAGE: %d%%' % CPU_PERCENT, InkyPHAT.WHITE, font=font)
+    canvas.text((5, 33), 'RAM USAGE: %d%%' % MEMORY_PERCENT, InkyPHAT.WHITE, font=font)
+    canvas.text((5, 48), 'DISK USAGE: %.1f%%' % DISK_PERCENT, InkyPHAT.WHITE, font=font)
+    canvas.text((5, 63), 'IN %dmb / OUT %dmb' % NETWORK_BITES, InkyPHAT.WHITE, font=font)
 
     display.set_image(bg)
     display.show()
@@ -68,11 +72,11 @@ def safe_image(source, mask=(InkyPHAT.WHITE, InkyPHAT.BLACK, InkyPHAT.YELLOW)):
             p = source.getpixel((x, y))
 
             if p == InkyPHAT.WHITE:
-                mask_image.putpixel((x, y), InkyPHAT.BLACK)
-            elif p == InkyPHAT.BLACK:
                 mask_image.putpixel((x, y), InkyPHAT.WHITE)
+            elif p == InkyPHAT.BLACK:
+                mask_image.putpixel((x, y), InkyPHAT.BLACK)
             else:
-                mask_image.putpixel((x, y), 3)
+                mask_image.putpixel((x, y), InkyPHAT.YELLOW)
 
     return mask_image
 
